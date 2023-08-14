@@ -114,7 +114,7 @@ class _UserProfileAppBarState extends State<UserProfileAppBar> {
             onPressed: () {
               Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
                   (route) => false);
             },
             child: const Text('Yes'),
