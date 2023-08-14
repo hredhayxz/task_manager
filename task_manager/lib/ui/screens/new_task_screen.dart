@@ -6,6 +6,7 @@ import 'package:task_manager/data/services/network_caller.dart';
 import 'package:task_manager/data/utility/urls.dart';
 import 'package:task_manager/ui/screens/add_new_task_screen.dart';
 import 'package:task_manager/ui/screens/update_task_status_sheet.dart';
+import 'package:task_manager/ui/state_managers/get_new_tasks_controller.dart';
 import 'package:task_manager/ui/state_managers/summary_count_controller.dart';
 import 'package:task_manager/ui/widgets/screen_background.dart';
 import 'package:task_manager/ui/widgets/summary_card.dart';
@@ -20,11 +21,11 @@ class NewTaskScreen extends StatefulWidget {
 }
 
 class _NewTaskScreenState extends State<NewTaskScreen> {
-  bool _getNewTaskInProgress = false;
-  TaskListModel _taskListModel = TaskListModel();
 
   final SummaryCountController _summaryCountController =
       Get.find<SummaryCountController>();
+  final GetNewTasksController _getNewTasksController =
+  Get.find<GetNewTasksController>();
 
   @override
   void initState() {
@@ -32,36 +33,15 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
     // after widget binding
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _summaryCountController.getCountSummary();
-      getNewTasks();
+      _getNewTasksController.getNewTasks();
     });
-  }
-
-  Future<void> getNewTasks() async {
-    _getNewTaskInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.newTasks);
-    if (response.isSuccess) {
-      _taskListModel = TaskListModel.fromJson(response.body!);
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Get new task data failed')));
-      }
-    }
-    _getNewTaskInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
   }
 
   Future<void> deleteTask(String taskId) async {
     final NetworkResponse response =
         await NetworkCaller().getRequest(Urls.deleteTask(taskId));
     if (response.isSuccess) {
-      _taskListModel.data!.removeWhere((element) => element.sId == taskId);
+      _getNewTasksController.taskListModel.data!.removeWhere((element) => element.sId == taskId);
       _summaryCountController.getCountSummary();
       if (mounted) {
         setState(() {
@@ -86,7 +66,7 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
             task: task,
             onUpdate: () {
               _summaryCountController.getCountSummary();
-              getNewTasks();
+              _getNewTasksController.getNewTasks();
             });
       },
     );
@@ -129,17 +109,17 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
                 child: RefreshIndicator(
                   onRefresh: () async {
                     _summaryCountController.getCountSummary();
-                    getNewTasks();
+                    _getNewTasksController.getNewTasks();
                   },
-                  child: _getNewTaskInProgress
+                  child: _getNewTasksController.getNewTaskInProgress
                       ? const Center(
                           child: CircularProgressIndicator(),
                         )
                       : ListView.separated(
-                          itemCount: _taskListModel.data?.length ?? 0,
+                          itemCount: _getNewTasksController.taskListModel.data?.length ?? 0,
                           itemBuilder: (context, index) {
                             return TaskListTile(
-                              data: _taskListModel.data![index],
+                              data: _getNewTasksController.taskListModel.data![index],
                               onDeleteTap: () {
                                 deleteAlertDialogue(index);
                                 //deleteTask(_taskListModel.data![index].sId!);
@@ -200,7 +180,7 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
           TextButton(
             onPressed: () {
               Navigator.of(ctx).pop();
-              deleteTask(_taskListModel.data![index].sId!);
+              deleteTask(_getNewTasksController.taskListModel.data![index].sId!);
             },
             child: const Text('Yes'),
           ),
@@ -238,7 +218,7 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
           TextButton(
             onPressed: () {
               Navigator.of(ctx).pop();
-              showStatusUpdateBottomSheet(_taskListModel.data![index]);
+              showStatusUpdateBottomSheet(_getNewTasksController.taskListModel.data![index]);
             },
             child: const Text('Yes'),
           ),

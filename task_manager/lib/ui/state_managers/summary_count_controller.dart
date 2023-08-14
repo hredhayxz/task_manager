@@ -23,7 +23,7 @@ class SummaryCountController extends GetxController {
       _summaryCountModel = SummaryCountModel.fromJson(response.body!);
       update();
     } else {
-      message = 'Count summary get failed! Try again.';
+      //message = 'Count summary get failed! Try again.';
       update();
     }
   }

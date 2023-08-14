@@ -17,15 +17,11 @@ class GetNewTasksController extends GetxController {
     _getNewTaskInProgress = true;
     update();
     final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.newTasks);
-    _getNewTaskInProgress = false;
-    update();
+    await NetworkCaller().getRequest(Urls.newTasks);
     if (response.isSuccess) {
       _taskListModel = TaskListModel.fromJson(response.body!);
-      update();
-    } else {
-      message = 'Get new task data failed!';
-      update();
     }
+    _getNewTaskInProgress = false;
+    update();
   }
 }
