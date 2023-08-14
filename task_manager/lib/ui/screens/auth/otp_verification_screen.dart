@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:task_manager/data/models/network_response.dart';
-import 'package:task_manager/data/services/network_caller.dart';
-import 'package:task_manager/data/utility/urls.dart';
 import 'package:task_manager/ui/screens/auth/login_screen.dart';
 import 'package:task_manager/ui/screens/auth/reset_password_screen.dart';
+import 'package:task_manager/ui/state_managers/otp_verification_controller.dart';
 import 'package:task_manager/ui/widgets/screen_background.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
@@ -19,38 +18,6 @@ class OtpVerificationScreen extends StatefulWidget {
 
 class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   final TextEditingController _otpTEController = TextEditingController();
-  bool _otpVerificationInProgress = false;
-
-  Future<void> verifyOTP() async {
-    _otpVerificationInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-    final NetworkResponse response = await NetworkCaller()
-        .getRequest(Urls.otpVerify(widget.email, _otpTEController.text));
-    _otpVerificationInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-    if (response.isSuccess) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Otp verification success!')));
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ResetPasswordScreen(
-                      email: widget.email,
-                      otp: _otpTEController.text,
-                    )));
-      }
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Otp verification has been failed!')));
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,30 +84,47 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   const SizedBox(
                     height: 16,
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: Visibility(
-                      visible: _otpVerificationInProgress == false,
-                      replacement: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_otpTEController.text.length < 6) {
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          'Otp verification has been failed!')));
+                  GetBuilder<OtpVerificationController>(
+                      builder: (otpController) {
+                    return SizedBox(
+                      width: double.infinity,
+                      child: Visibility(
+                        visible:
+                            otpController.otpVerificationInProgress == false,
+                        replacement: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (_otpTEController.text.length < 6) {
+                              if (mounted) {
+                                Get.snackbar(
+                                    'Warning', 'Otp must be 6 digit!');
+                              }
+                            } else {
+                              otpController
+                                  .verifyOTP(
+                                      widget.email, _otpTEController.text)
+                                  .then((value) {
+                                if (value) {
+                                  Get.snackbar(
+                                      'Success', 'Otp verification success!');
+                                  Get.to(ResetPasswordScreen(
+                                    email: widget.email,
+                                    otp: _otpTEController.text,
+                                  ));
+                                } else {
+                                  Get.snackbar('Failed',
+                                      'Otp verification has been failed!');
+                                }
+                              });
                             }
-                          } else {
-                            verifyOTP();
-                          }
-                        },
-                        child: const Text('Verify'),
+                          },
+                          child: const Text('Verify'),
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  }),
                   const SizedBox(
                     height: 16,
                   ),
