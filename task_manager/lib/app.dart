@@ -10,6 +10,7 @@ import 'package:task_manager/ui/state_managers/otp_verification_controller.dart'
 import 'package:task_manager/ui/state_managers/reset_password_controller.dart';
 import 'package:task_manager/ui/state_managers/signup_controller.dart';
 import 'package:task_manager/ui/state_managers/summary_count_controller.dart';
+import 'package:task_manager/ui/state_managers/update_task_status_controller.dart';
 
 class TaskManagerApp extends StatefulWidget {
   static GlobalKey<NavigatorState> globalKey = GlobalKey<NavigatorState>();
@@ -98,5 +99,6 @@ class ControllerBinding extends Bindings {
     Get.put(SummaryCountController());
     Get.put(GetTasksController());
     Get.put(DeleteTaskController());
+    Get.put(UpdateTaskStatusController());
   }
 }

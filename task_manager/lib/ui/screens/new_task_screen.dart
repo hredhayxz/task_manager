@@ -64,6 +64,7 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
         return UpdateTaskStatusSheet(
             task: task,
             onUpdate: () {
+              Get.back();
               _summaryCountController.getCountSummary();
               _getTasksController.getTasks(Urls.newTasks);
             });
@@ -216,7 +217,9 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
                   .deleteTask(
                       _getTasksController.taskListModel.data![index].sId!)
                   .then((value) {
+                _summaryCountController.getCountSummary();
                 _getTasksController.getUpdateState();
+
                 if (value) {
                   Get.snackbar(
                     'Success',

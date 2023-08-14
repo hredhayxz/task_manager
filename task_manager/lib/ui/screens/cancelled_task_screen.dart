@@ -47,6 +47,7 @@ class _CancelledTaskScreenState extends State<CancelledTaskScreen> {
         return UpdateTaskStatusSheet(
             task: task,
             onUpdate: () {
+              Get.back();
               _getTasksController.getTasks(Urls.cancelledTasks);
             });
       },

@@ -5,6 +5,7 @@ import 'package:task_manager/data/utility/urls.dart';
 import 'package:task_manager/ui/screens/update_task_status_sheet.dart';
 import 'package:task_manager/ui/state_managers/delete_task_controller.dart';
 import 'package:task_manager/ui/state_managers/get_task_controller.dart';
+import 'package:task_manager/ui/state_managers/update_task_status_controller.dart';
 import 'package:task_manager/ui/widgets/screen_background.dart';
 import 'package:task_manager/ui/widgets/task_list_tile.dart';
 import 'package:task_manager/ui/widgets/user_profile_appbar.dart';
@@ -47,6 +48,7 @@ class _CompletedTaskScreenState extends State<CompletedTaskScreen> {
         return UpdateTaskStatusSheet(
             task: task,
             onUpdate: () {
+              Get.back();
               _getTasksController.getTasks(Urls.completedTasks);
             });
       },

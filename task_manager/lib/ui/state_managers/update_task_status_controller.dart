@@ -8,6 +8,10 @@ class UpdateTaskStatusController extends GetxController {
 
   bool get updateTaskInProgress => _updateTaskInProgress;
 
+  void getUpdateState() {
+    update();
+  }
+
   Future<bool> updateTask(String taskId, String newStatus) async {
     _updateTaskInProgress = true;
     update();
@@ -17,18 +21,8 @@ class UpdateTaskStatusController extends GetxController {
     update();
     if (response.isSuccess) {
       return true;
-      widget.onUpdate();
-      if (mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Update task status successful!')));
-      }
     } else {
       return false;
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Update task status has been failed')));
-      }
     }
   }
 }

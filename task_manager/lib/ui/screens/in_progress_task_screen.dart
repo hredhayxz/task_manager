@@ -47,6 +47,7 @@ class _InProgressTaskScreenState extends State<InProgressTaskScreen> {
         return UpdateTaskStatusSheet(
             task: task,
             onUpdate: () {
+              Get.back();
               _getTasksController.getTasks(Urls.inProgressTasks);
             });
       },
