@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_manager/ui/screens/splash_screen.dart';
 
 class TaskManagerApp extends StatefulWidget {
@@ -12,7 +13,7 @@ class TaskManagerApp extends StatefulWidget {
 class _TaskManagerAppState extends State<TaskManagerApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       navigatorKey: TaskManagerApp.globalKey,
       debugShowCheckedModeBanner: false,
       title: 'Task Manager',
