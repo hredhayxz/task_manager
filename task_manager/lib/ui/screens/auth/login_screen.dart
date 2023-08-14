@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_manager/ui/screens/auth/signup_screen.dart';
 import 'package:task_manager/ui/screens/bottom_nav_base_screen.dart';
-import 'package:task_manager/ui/screens/email_verification_screen.dart';
+import 'package:task_manager/ui/screens/auth/email_verification_screen.dart';
 import 'package:task_manager/ui/state_managers/login_controller.dart';
 import 'package:task_manager/ui/widgets/screen_background.dart';
 
@@ -119,7 +119,7 @@ class LoginScreen extends StatelessWidget {
                   Center(
                     child: InkWell(
                       onTap: () {
-                        Get.to(() => const EmailVerificationScreen());
+                        Get.to(() => EmailVerificationScreen());
                       },
                       child: const Text(
                         'Forgot Password?',
@@ -137,7 +137,7 @@ class LoginScreen extends StatelessWidget {
                       ),
                       TextButton(
                           onPressed: () {
-                            Get.to(() => const SignUpScreen());
+                            Get.to(() => SignUpScreen());
                           },
                           child: const Text('Sign up')),
                     ],

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_manager/ui/screens/splash_screen.dart';
+import 'package:task_manager/ui/state_managers/email_verification_controller.dart';
 import 'package:task_manager/ui/state_managers/login_controller.dart';
 import 'package:task_manager/ui/state_managers/otp_verification_controller.dart';
+import 'package:task_manager/ui/state_managers/reset_password_controller.dart';
+import 'package:task_manager/ui/state_managers/signup_controller.dart';
 
 class TaskManagerApp extends StatefulWidget {
   static GlobalKey<NavigatorState> globalKey = GlobalKey<NavigatorState>();
@@ -84,5 +87,8 @@ class ControllerBinding extends Bindings {
   void dependencies() {
     Get.put(LoginController());
     Get.put(OtpVerificationController());
+    Get.put(ResetPasswordController());
+    Get.put(SignupController());
+    Get.put(EmailVerificationController());
   }
 }
