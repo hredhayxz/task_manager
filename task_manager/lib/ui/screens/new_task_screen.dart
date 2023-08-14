@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_manager/data/models/network_response.dart';
-import 'package:task_manager/data/models/summary_count_model.dart';
 import 'package:task_manager/data/models/task_list_model.dart';
 import 'package:task_manager/data/services/network_caller.dart';
 import 'package:task_manager/data/utility/urls.dart';
 import 'package:task_manager/ui/screens/add_new_task_screen.dart';
 import 'package:task_manager/ui/screens/update_task_status_sheet.dart';
+import 'package:task_manager/ui/state_managers/summary_count_controller.dart';
 import 'package:task_manager/ui/widgets/screen_background.dart';
 import 'package:task_manager/ui/widgets/summary_card.dart';
 import 'package:task_manager/ui/widgets/task_list_tile.dart';
@@ -19,39 +20,20 @@ class NewTaskScreen extends StatefulWidget {
 }
 
 class _NewTaskScreenState extends State<NewTaskScreen> {
-  bool _getCountSummaryInProgress = false, _getNewTaskInProgress = false;
-  SummaryCountModel _summaryCountModel = SummaryCountModel();
+  bool _getNewTaskInProgress = false;
   TaskListModel _taskListModel = TaskListModel();
+
+  final SummaryCountController _summaryCountController =
+      Get.find<SummaryCountController>();
 
   @override
   void initState() {
     super.initState();
     // after widget binding
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      getCountSummary();
+      _summaryCountController.getCountSummary();
       getNewTasks();
     });
-  }
-
-  Future<void> getCountSummary() async {
-    _getCountSummaryInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.taskStatusCount);
-    if (response.isSuccess) {
-      _summaryCountModel = SummaryCountModel.fromJson(response.body!);
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Summary count data get failed.')));
-      }
-    }
-    _getCountSummaryInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
   }
 
   Future<void> getNewTasks() async {
@@ -78,9 +60,9 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
   Future<void> deleteTask(String taskId) async {
     final NetworkResponse response =
         await NetworkCaller().getRequest(Urls.deleteTask(taskId));
-    if (response.isSuccess && response.statusCode == 200) {
+    if (response.isSuccess) {
       _taskListModel.data!.removeWhere((element) => element.sId == taskId);
-      getCountSummary();
+      _summaryCountController.getCountSummary();
       if (mounted) {
         setState(() {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -103,7 +85,7 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
         return UpdateTaskStatusSheet(
             task: task,
             onUpdate: () {
-              getCountSummary();
+              _summaryCountController.getCountSummary();
               getNewTasks();
             });
       },
@@ -118,7 +100,7 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
           child: Column(
             children: [
               const UserProfileAppBar(),
-              _getCountSummaryInProgress
+              _summaryCountController.getCountSummaryInProgress
                   ? const LinearProgressIndicator()
                   : Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -127,12 +109,12 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
                         width: double.infinity,
                         child: ListView.separated(
                           scrollDirection: Axis.horizontal,
-                          itemCount: _summaryCountModel.data?.length ?? 0,
+                          itemCount: _summaryCountController.summaryCountModel.data?.length ?? 0,
                           itemBuilder: (context, index) {
                             return SummaryCard(
                               title:
-                                  _summaryCountModel.data![index].sId ?? 'New',
-                              number: _summaryCountModel.data![index].sum ?? 0,
+                              _summaryCountController.summaryCountModel.data![index].sId ?? 'New',
+                              number: _summaryCountController.summaryCountModel.data![index].sum ?? 0,
                             );
                           },
                           separatorBuilder: (BuildContext context, int index) {
@@ -146,7 +128,7 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: () async {
-                    getCountSummary();
+                    _summaryCountController.getCountSummary();
                     getNewTasks();
                   },
                   child: _getNewTaskInProgress
@@ -182,10 +164,8 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => AddNewTaskScreen()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => AddNewTaskScreen()));
         },
       ),
     );
