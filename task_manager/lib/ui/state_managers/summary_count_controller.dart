@@ -13,7 +13,7 @@ class SummaryCountController extends GetxController {
 
   SummaryCountModel get summaryCountModel => _summaryCountModel;
 
-  Future<bool> getCountSummary() async {
+  Future<void> getCountSummary() async {
     _getCountSummaryInProgress = true;
     update();
     final NetworkResponse response =
@@ -22,11 +22,9 @@ class SummaryCountController extends GetxController {
     if (response.isSuccess) {
       _summaryCountModel = SummaryCountModel.fromJson(response.body!);
       update();
-      return true;
     } else {
       message = 'Count summary get failed! Try again.';
       update();
-      return false;
     }
   }
 }

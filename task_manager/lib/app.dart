@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:task_manager/ui/screens/splash_screen.dart';
 import 'package:task_manager/ui/state_managers/add_new_task_controller.dart';
 import 'package:task_manager/ui/state_managers/email_verification_controller.dart';
+import 'package:task_manager/ui/state_managers/get_new_tasks_controller.dart';
 import 'package:task_manager/ui/state_managers/login_controller.dart';
 import 'package:task_manager/ui/state_managers/otp_verification_controller.dart';
 import 'package:task_manager/ui/state_managers/reset_password_controller.dart';
@@ -94,5 +95,6 @@ class ControllerBinding extends Bindings {
     Get.put(EmailVerificationController());
     Get.put(AddNewTaskController());
     Get.put(SummaryCountController());
+    Get.put(GetNewTasksController());
   }
 }
