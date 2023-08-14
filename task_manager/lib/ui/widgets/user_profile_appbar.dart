@@ -86,33 +86,31 @@ class _UserProfileAppBarState extends State<UserProfileAppBar> {
   }
 
   void logoutAlertDialogue() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
+    Get.dialog(
+      AlertDialog(
         title: const Text(
-          "Logout Alert",
+          'Logout Alert',
           style: TextStyle(
             color: Colors.red,
             fontWeight: FontWeight.bold,
-            // Set the title text color here
           ),
         ),
         content: const Text(
-          "Are you want to log out?",
+          'Are you want to log out?',
           style: TextStyle(
-            color: Colors.black, // Set the content text color here
+            color: Colors.black,
           ),
         ),
-        backgroundColor: Colors.white,
-        actions: [
+        actions: <Widget>[
           TextButton(
             onPressed: () {
-              Navigator.of(ctx).pop();
+              Get.back();
             },
             child: const Text('No'),
           ),
           TextButton(
             onPressed: () {
+              AuthUtility.clearUserInfo();
               Get.offAll(() => LoginScreen());
             },
             child: const Text('Yes'),
