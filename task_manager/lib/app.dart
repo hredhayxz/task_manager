@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_manager/ui/screens/splash_screen.dart';
+import 'package:task_manager/ui/state_managers/login_controller.dart';
 
 class TaskManagerApp extends StatefulWidget {
   static GlobalKey<NavigatorState> globalKey = GlobalKey<NavigatorState>();
+
   const TaskManagerApp({Key? key}) : super(key: key);
 
   @override
@@ -69,8 +71,16 @@ class _TaskManagerAppState extends State<TaskManagerApp> {
           ),
         ),
       ),
+      initialBinding: ControllerBinding(),
       themeMode: ThemeMode.light,
       home: const SplashScreen(),
     );
+  }
+}
+
+class ControllerBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.put(LoginController());
   }
 }
