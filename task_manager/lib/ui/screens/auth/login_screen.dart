@@ -90,10 +90,22 @@ class LoginScreen extends StatelessWidget {
                                       _passwordTEController.text)
                                   .then((value) {
                                 if (value) {
+                                  Get.snackbar(
+                                    'Login Success',
+                                    'User login successful!',
+                                    backgroundColor: Colors.green,
+                                    colorText: Colors.white,
+                                    borderRadius: 10,
+                                  );
                                   Get.offAll(() => const BottomNavBaseScreen());
                                 } else {
-                                  Get.snackbar('Login Failed',
-                                      'Incorrect email or password');
+                                  Get.snackbar(
+                                    'Login Failed',
+                                    'Incorrect email or password',
+                                    backgroundColor: Colors.red,
+                                    colorText: Colors.white,
+                                    borderRadius: 10,
+                                  );
                                 }
                               });
                             },

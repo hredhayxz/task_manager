@@ -6,17 +6,11 @@ import 'package:task_manager/ui/screens/auth/reset_password_screen.dart';
 import 'package:task_manager/ui/state_managers/otp_verification_controller.dart';
 import 'package:task_manager/ui/widgets/screen_background.dart';
 
-class OtpVerificationScreen extends StatefulWidget {
+class OtpVerificationScreen extends StatelessWidget {
   final String email;
 
-  const OtpVerificationScreen({Key? key, required this.email})
-      : super(key: key);
+  OtpVerificationScreen({Key? key, required this.email}) : super(key: key);
 
-  @override
-  State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
-}
-
-class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   final TextEditingController _otpTEController = TextEditingController();
 
   @override
@@ -97,25 +91,37 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                         child: ElevatedButton(
                           onPressed: () {
                             if (_otpTEController.text.length < 6) {
-                              if (mounted) {
-                                Get.snackbar(
-                                    'Warning', 'Otp must be 6 digit!');
-                              }
+                              Get.snackbar(
+                                'Warning',
+                                'Otp must be 6 digit!',
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white,
+                                borderRadius: 10,
+                              );
                             } else {
                               otpController
-                                  .verifyOTP(
-                                      widget.email, _otpTEController.text)
+                                  .verifyOTP(email, _otpTEController.text)
                                   .then((value) {
                                 if (value) {
                                   Get.snackbar(
-                                      'Success', 'Otp verification success!');
-                                  Get.to(ResetPasswordScreen(
-                                    email: widget.email,
-                                    otp: _otpTEController.text,
-                                  ));
+                                    'Success',
+                                    'Otp verification success!',
+                                    backgroundColor: Colors.green,
+                                    colorText: Colors.white,
+                                    borderRadius: 10,
+                                  );
+                                  Get.to(() => ResetPasswordScreen(
+                                        email: email,
+                                        otp: _otpTEController.text,
+                                      ));
                                 } else {
-                                  Get.snackbar('Failed',
-                                      'Otp verification has been failed!');
+                                  Get.snackbar(
+                                    'Failed',
+                                    'Otp verification has been failed!',
+                                    backgroundColor: Colors.red,
+                                    colorText: Colors.white,
+                                    borderRadius: 10,
+                                  );
                                 }
                               });
                             }
@@ -138,11 +144,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       ),
                       TextButton(
                           onPressed: () {
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LoginScreen()),
-                                (route) => false);
+                            Get.offAll(() => LoginScreen());
                           },
                           child: const Text('Sign in')),
                     ],
