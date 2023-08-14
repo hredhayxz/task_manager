@@ -7,6 +7,10 @@ class GetTasksController extends GetxController {
   bool _getTaskInProgress = false;
   TaskListModel _taskListModel = TaskListModel();
 
+  void getUpdateState() {
+    update();
+  }
+
   bool get getTaskInProgress => _getTaskInProgress;
 
   TaskListModel get taskListModel => _taskListModel;

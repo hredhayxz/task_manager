@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_manager/data/models/network_response.dart';
 import 'package:task_manager/data/models/task_list_model.dart';
-import 'package:task_manager/data/services/network_caller.dart';
-import 'package:task_manager/data/utility/urls.dart';
 
 class UpdateTaskStatusSheet extends StatefulWidget {
   final TaskData task;
@@ -19,38 +16,11 @@ class UpdateTaskStatusSheet extends StatefulWidget {
 class _UpdateTaskStatusSheetState extends State<UpdateTaskStatusSheet> {
   List<String> taskStatusList = ['New', 'Progress', 'Cancelled', 'Completed'];
   late String _selectedTask;
-  bool updateTaskInProgress = false;
 
   @override
   void initState() {
     _selectedTask = widget.task.status!;
     super.initState();
-  }
-
-  Future<void> updateTask(String taskId, String newStatus) async {
-    updateTaskInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.updateTask(taskId, newStatus));
-    updateTaskInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-    if (response.isSuccess) {
-      widget.onUpdate();
-      if (mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Update task status successful!')));
-      }
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Update task status has been failed')));
-      }
-    }
   }
 
   @override

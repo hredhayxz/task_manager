@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_manager/data/models/network_response.dart';
 import 'package:task_manager/data/models/task_list_model.dart';
-import 'package:task_manager/data/services/network_caller.dart';
 import 'package:task_manager/data/utility/urls.dart';
 import 'package:task_manager/ui/screens/add_new_task_screen.dart';
 import 'package:task_manager/ui/screens/update_task_status_sheet.dart';
+import 'package:task_manager/ui/state_managers/delete_task_controller.dart';
 import 'package:task_manager/ui/state_managers/get_task_controller.dart';
 import 'package:task_manager/ui/state_managers/summary_count_controller.dart';
 import 'package:task_manager/ui/widgets/screen_background.dart';
@@ -24,6 +23,8 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
   final SummaryCountController _summaryCountController =
       Get.find<SummaryCountController>();
   final GetTasksController _getTasksController = Get.find<GetTasksController>();
+  final DeleteTaskController _deleteTaskController =
+      Get.find<DeleteTaskController>();
 
   @override
   void initState() {
@@ -53,27 +54,6 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
         }
       });
     });
-  }
-
-  Future<void> deleteTask(String taskId) async {
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.deleteTask(taskId));
-    if (response.isSuccess) {
-      _getTasksController.taskListModel.data!
-          .removeWhere((element) => element.sId == taskId);
-      _summaryCountController.getCountSummary();
-      if (mounted) {
-        setState(() {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Deletion successful!')));
-        });
-      }
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Deletion of task has been failed')));
-      }
-    }
   }
 
   void showStatusUpdateBottomSheet(TaskData task) {
@@ -207,35 +187,54 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
   }
 
   void deleteAlertDialogue(int index) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
+    Get.dialog(
+      AlertDialog(
         title: const Text(
-          "Alert",
+          'Delete Alert',
           style: TextStyle(
             color: Colors.red,
             fontWeight: FontWeight.bold,
-            // Set the title text color here
           ),
         ),
         content: const Text(
           "Are you want to delete this item?",
           style: TextStyle(
-            color: Colors.black, // Set the content text color here
+            color: Colors.black,
           ),
         ),
-        backgroundColor: Colors.white,
-        actions: [
+        actions: <Widget>[
           TextButton(
             onPressed: () {
-              Navigator.of(ctx).pop();
+              Get.back();
             },
             child: const Text('No'),
           ),
           TextButton(
             onPressed: () {
-              Navigator.of(ctx).pop();
-              deleteTask(_getTasksController.taskListModel.data![index].sId!);
+              Get.back();
+              _deleteTaskController
+                  .deleteTask(
+                      _getTasksController.taskListModel.data![index].sId!)
+                  .then((value) {
+                _getTasksController.getUpdateState();
+                if (value) {
+                  Get.snackbar(
+                    'Success',
+                    'Task deletion successful!',
+                    backgroundColor: Colors.green,
+                    colorText: Colors.white,
+                    borderRadius: 10,
+                  );
+                } else {
+                  Get.snackbar(
+                    'Failed',
+                    'Task deletion failed!',
+                    backgroundColor: Colors.red,
+                    colorText: Colors.white,
+                    borderRadius: 10,
+                  );
+                }
+              });
             },
             child: const Text('Yes'),
           ),
@@ -245,34 +244,31 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
   }
 
   void editAlertDialogue(int index) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
+    Get.dialog(
+      AlertDialog(
         title: const Text(
-          "Alert",
+          'Edit Alert',
           style: TextStyle(
             color: Colors.red,
             fontWeight: FontWeight.bold,
-            // Set the title text color here
           ),
         ),
         content: const Text(
           "Are you want to edit status of this item?",
           style: TextStyle(
-            color: Colors.black, // Set the content text color here
+            color: Colors.black,
           ),
         ),
-        backgroundColor: Colors.white,
-        actions: [
+        actions: <Widget>[
           TextButton(
             onPressed: () {
-              Navigator.of(ctx).pop();
+              Get.back();
             },
             child: const Text('No'),
           ),
           TextButton(
             onPressed: () {
-              Navigator.of(ctx).pop();
+              Get.back();
               showStatusUpdateBottomSheet(
                   _getTasksController.taskListModel.data![index]);
             },
