@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_manager/ui/screens/auth/login_screen.dart';
 import 'package:task_manager/ui/screens/update_profile_screen.dart';
 import 'package:task_manager/ui/utility/auth_utility.dart';
@@ -112,10 +113,7 @@ class _UserProfileAppBarState extends State<UserProfileAppBar> {
           ),
           TextButton(
             onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                  (route) => false);
+              Get.offAll(() => LoginScreen());
             },
             child: const Text('Yes'),
           ),
