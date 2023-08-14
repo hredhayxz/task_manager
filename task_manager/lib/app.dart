@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_manager/ui/screens/splash_screen.dart';
 import 'package:task_manager/ui/state_managers/add_new_task_controller.dart';
+import 'package:task_manager/ui/state_managers/bottom_nav_controller.dart';
 import 'package:task_manager/ui/state_managers/delete_task_controller.dart';
 import 'package:task_manager/ui/state_managers/email_verification_controller.dart';
 import 'package:task_manager/ui/state_managers/get_task_controller.dart';
@@ -100,5 +101,6 @@ class ControllerBinding extends Bindings {
     Get.put(GetTasksController());
     Get.put(DeleteTaskController());
     Get.put(UpdateTaskStatusController());
+    Get.put(BottomNavController());
   }
 }
