@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
       final bool isLoggedIn = await AuthUtility.checkIfUserLoggedIn();
       if (mounted) {
         Get.offAll(
-          () => isLoggedIn ? const BottomNavBaseScreen() : LoginScreen(),
+          () => isLoggedIn ? BottomNavBaseScreen() : LoginScreen(),
         );
       }
     });

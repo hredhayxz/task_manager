@@ -97,7 +97,7 @@ class LoginScreen extends StatelessWidget {
                                     colorText: Colors.white,
                                     borderRadius: 10,
                                   );
-                                  Get.offAll(() => const BottomNavBaseScreen());
+                                  Get.offAll(() => BottomNavBaseScreen());
                                 } else {
                                   Get.snackbar(
                                     'Login Failed',

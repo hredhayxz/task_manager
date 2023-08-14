@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_manager/ui/screens/cancelled_task_screen.dart';
 import 'package:task_manager/ui/screens/completed_task_screen.dart';
 import 'package:task_manager/ui/screens/in_progress_task_screen.dart';
 import 'package:task_manager/ui/screens/new_task_screen.dart';
 
-class BottomNavBaseScreen extends StatefulWidget {
-  const BottomNavBaseScreen({Key? key}) : super(key: key);
-
-  @override
-  State<BottomNavBaseScreen> createState() => _BottomNavBaseScreenState();
-}
-
-class _BottomNavBaseScreenState extends State<BottomNavBaseScreen> {
-  int _selectedScreenIndex = 0;
+class BottomNavBaseScreen extends StatelessWidget {
+  BottomNavBaseScreen({super.key});
+  final RxInt _selectedScreenIndex = 0.obs;
   final List<Widget> _screens = const [
     NewTaskScreen(),
     InProgressTaskScreen(),
@@ -22,21 +17,18 @@ class _BottomNavBaseScreenState extends State<BottomNavBaseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(_selectedScreenIndex);
+    print(_selectedScreenIndex.value);
     return Scaffold(
-      body: _screens[_selectedScreenIndex],
+      body: Obx(() => _screens[_selectedScreenIndex.value]),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedScreenIndex,
+        currentIndex: _selectedScreenIndex.value,
         unselectedItemColor: Colors.grey,
         unselectedLabelStyle: const TextStyle(color: Colors.grey),
         showUnselectedLabels: true,
         selectedItemColor: Colors.green,
         onTap: (int index) {
-          _selectedScreenIndex = index;
-          print(_selectedScreenIndex);
-          if (mounted) {
-            setState(() {});
-          }
+          _selectedScreenIndex.value = index;
+          print(_selectedScreenIndex.value);
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.ac_unit), label: 'New'),
