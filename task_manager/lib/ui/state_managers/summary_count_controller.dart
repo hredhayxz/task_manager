@@ -7,24 +7,23 @@ import 'package:task_manager/data/utility/urls.dart';
 class SummaryCountController extends GetxController {
   bool _getCountSummaryInProgress = false;
   SummaryCountModel _summaryCountModel = SummaryCountModel();
-  String message = '';
 
   bool get getCountSummaryInProgress => _getCountSummaryInProgress;
 
   SummaryCountModel get summaryCountModel => _summaryCountModel;
 
-  Future<void> getCountSummary() async {
+  Future<bool> getCountSummary() async {
     _getCountSummaryInProgress = true;
     update();
     final NetworkResponse response =
         await NetworkCaller().getRequest(Urls.taskStatusCount);
     _getCountSummaryInProgress = false;
+    update();
     if (response.isSuccess) {
       _summaryCountModel = SummaryCountModel.fromJson(response.body!);
-      update();
+      return true;
     } else {
-      //message = 'Count summary get failed! Try again.';
-      update();
+      return false;
     }
   }
 }

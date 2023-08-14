@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_manager/data/models/network_response.dart';
 import 'package:task_manager/data/models/task_list_model.dart';
 import 'package:task_manager/data/services/network_caller.dart';
 import 'package:task_manager/data/utility/urls.dart';
 import 'package:task_manager/ui/screens/update_task_status_sheet.dart';
+import 'package:task_manager/ui/state_managers/get_task_controller.dart';
 import 'package:task_manager/ui/widgets/screen_background.dart';
 import 'package:task_manager/ui/widgets/task_list_tile.dart';
 import 'package:task_manager/ui/widgets/user_profile_appbar.dart';
@@ -16,35 +18,22 @@ class CancelledTaskScreen extends StatefulWidget {
 }
 
 class _CancelledTaskScreenState extends State<CancelledTaskScreen> {
-  bool _getCancelledTasksInProgress = false;
-  TaskListModel _taskListModel = TaskListModel();
-
-  Future<void> getCancelledTasks() async {
-    _getCancelledTasksInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.cancelledTasks);
-    if (response.isSuccess) {
-      _taskListModel = TaskListModel.fromJson(response.body!);
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Cancelled tasks get failed')));
-      }
-    }
-    _getCancelledTasksInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
+  final GetTasksController _getTasksController = Get.find<GetTasksController>();
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      getCancelledTasks();
+      _getTasksController.getTasks(Urls.cancelledTasks).then((value) {
+        if (value == false) {
+          Get.snackbar(
+            'Failed',
+            'Cancelled task data get failed!',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            borderRadius: 10,
+          );
+        }
+      });
     });
   }
 
@@ -52,7 +41,7 @@ class _CancelledTaskScreenState extends State<CancelledTaskScreen> {
     final NetworkResponse response =
         await NetworkCaller().getRequest(Urls.deleteTask(taskId));
     if (response.isSuccess) {
-      _taskListModel.data!.removeWhere((element) => element.sId == taskId);
+      _getTasksController.taskListModel.data!.removeWhere((element) => element.sId == taskId);
       if (mounted) {
         setState(() {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -75,7 +64,7 @@ class _CancelledTaskScreenState extends State<CancelledTaskScreen> {
         return UpdateTaskStatusSheet(
             task: task,
             onUpdate: () {
-              getCancelledTasks();
+              _getTasksController.getTasks(Urls.cancelledTasks);
             });
       },
     );
@@ -90,17 +79,23 @@ class _CancelledTaskScreenState extends State<CancelledTaskScreen> {
             children: [
               const UserProfileAppBar(),
               Expanded(
-                child: _getCancelledTasksInProgress
-                    ? const Center(
+                child: GetBuilder<GetTasksController>(
+                    builder: (getTasksController) {
+                      return getTasksController.getTaskInProgress
+                          ? const Center(
                         child: CircularProgressIndicator(),
                       )
-                    : ListView.separated(
-                        itemCount: _taskListModel.data?.length ?? 0,
+                          : ListView.separated(
+                        itemCount:
+                        getTasksController.taskListModel.data?.length ??
+                            0,
                         itemBuilder: (context, index) {
                           return TaskListTile(
-                            data: _taskListModel.data![index],
+                            data:
+                            getTasksController.taskListModel.data![index],
                             onDeleteTap: () {
                               deleteAlertDialogue(index);
+                              //deleteTask(_taskListModel.data![index].sId!);
                             },
                             onEditTap: () {
                               editAlertDialogue(index);
@@ -112,7 +107,8 @@ class _CancelledTaskScreenState extends State<CancelledTaskScreen> {
                             height: 4,
                           );
                         },
-                      ),
+                      );
+                    }),
               ),
             ],
           ),
@@ -150,7 +146,7 @@ class _CancelledTaskScreenState extends State<CancelledTaskScreen> {
           TextButton(
             onPressed: () {
               Navigator.of(ctx).pop();
-              deleteTask(_taskListModel.data![index].sId!);
+              deleteTask(_getTasksController.taskListModel.data![index].sId!);
             },
             child: const Text('Yes'),
           ),
@@ -188,7 +184,7 @@ class _CancelledTaskScreenState extends State<CancelledTaskScreen> {
           TextButton(
             onPressed: () {
               Navigator.of(ctx).pop();
-              showStatusUpdateBottomSheet(_taskListModel.data![index]);
+              showStatusUpdateBottomSheet(_getTasksController.taskListModel.data![index]);
             },
             child: const Text('Yes'),
           ),
