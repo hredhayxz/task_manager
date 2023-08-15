@@ -11,6 +11,7 @@ import 'package:task_manager/ui/state_managers/otp_verification_controller.dart'
 import 'package:task_manager/ui/state_managers/reset_password_controller.dart';
 import 'package:task_manager/ui/state_managers/signup_controller.dart';
 import 'package:task_manager/ui/state_managers/summary_count_controller.dart';
+import 'package:task_manager/ui/state_managers/update_profile_controller.dart';
 import 'package:task_manager/ui/state_managers/update_task_status_controller.dart';
 
 class TaskManagerApp extends StatefulWidget {
@@ -102,5 +103,6 @@ class ControllerBinding extends Bindings {
     Get.put(DeleteTaskController());
     Get.put(UpdateTaskStatusController());
     Get.put(BottomNavController());
+    Get.put(UpdateProfileController());
   }
 }

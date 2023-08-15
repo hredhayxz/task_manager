@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:task_manager/data/models/login_model.dart';
 import 'package:task_manager/data/models/network_response.dart';
 import 'package:task_manager/data/services/network_caller.dart';
 import 'package:task_manager/data/utility/urls.dart';
+import 'package:task_manager/ui/state_managers/update_profile_controller.dart';
 import 'package:task_manager/ui/utility/auth_utility.dart';
 import 'package:task_manager/ui/widgets/screen_background.dart';
 import 'package:task_manager/ui/widgets/user_profile_appbar.dart';
@@ -16,6 +18,8 @@ class UpdateProfileScreen extends StatefulWidget {
 }
 
 class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
+  final UpdateProfileController _updateProfileController =
+      Get.find<UpdateProfileController>();
   UserData userData = AuthUtility.userInfo.data!;
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _firstNameTEController = TextEditingController();
@@ -26,7 +30,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   XFile? imageFile;
   ImagePicker picker = ImagePicker();
-  bool _profileUpdateInProgress = false;
 
   @override
   void initState() {
@@ -35,46 +38,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     _firstNameTEController.text = userData.firstName ?? '';
     _lastNameTEController.text = userData.lastName ?? '';
     _mobileTEController.text = userData.mobile ?? '';
-  }
-
-  Future<void> updateProfile() async {
-    _profileUpdateInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-    final Map<String, dynamic> requestBody = {
-      "firstName": _firstNameTEController.text.trim(),
-      "lastName": _lastNameTEController.text.trim(),
-      "mobile": _mobileTEController.text.trim(),
-      "photo": ""
-    };
-    if (_passwordTEController.text.isNotEmpty &&
-        _passwordTEController.text.length >= 5) {
-      requestBody['password'] = _passwordTEController.text;
-    }
-
-    final NetworkResponse response =
-        await NetworkCaller().postRequest(Urls.profileUpdate, requestBody);
-    _profileUpdateInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-    if (response.isSuccess) {
-      userData.firstName = _firstNameTEController.text.trim();
-      userData.lastName = _lastNameTEController.text.trim();
-      userData.mobile = _mobileTEController.text.trim();
-      AuthUtility.updateUserInfo(userData);
-      _passwordTEController.clear();
-      if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Profile updated!')));
-      }
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile update failed! Try again.')));
-      }
-    }
   }
 
   @override
@@ -221,23 +184,53 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         const SizedBox(
                           height: 16,
                         ),
-                        SizedBox(
-                          width: double.infinity,
-                          child: Visibility(
-                            visible: _profileUpdateInProgress == false,
-                            replacement: const Center(
-                                child: CircularProgressIndicator()),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                if (!_formKey.currentState!.validate()) {
-                                  return;
-                                }
-                                updateProfile();
-                              },
-                              child: const Text('Update'),
+                        GetBuilder<UpdateProfileController>(
+                            builder: (updateProfileController) {
+                          return SizedBox(
+                            width: double.infinity,
+                            child: Visibility(
+                              visible: updateProfileController
+                                      .profileUpdateInProgress ==
+                                  false,
+                              replacement: const Center(
+                                  child: CircularProgressIndicator()),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if (!_formKey.currentState!.validate()) {
+                                    return;
+                                  }
+                                  updateProfileController
+                                      .updateProfile(
+                                          _firstNameTEController.text.trim(),
+                                          _lastNameTEController.text.trim(),
+                                          _mobileTEController.text.trim(),
+                                          _passwordTEController.text)
+                                      .then((value) {
+                                    if (value) {
+                                      _passwordTEController.clear();
+                                      Get.snackbar(
+                                        'Success',
+                                        'Profile updated!',
+                                        backgroundColor: Colors.green,
+                                        colorText: Colors.white,
+                                        borderRadius: 10,
+                                      );
+                                    } else {
+                                      Get.snackbar(
+                                        'Failed',
+                                        'Profile update failed! Try again.',
+                                        backgroundColor: Colors.red,
+                                        colorText: Colors.white,
+                                        borderRadius: 10,
+                                      );
+                                    }
+                                  });
+                                },
+                                child: const Text('Update'),
+                              ),
                             ),
-                          ),
-                        )
+                          );
+                        }),
                       ],
                     ),
                   ),
@@ -254,9 +247,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     picker.pickImage(source: ImageSource.gallery).then((xFile) {
       if (xFile != null) {
         imageFile = xFile;
-        if (mounted) {
-          setState(() {});
-        }
+        _updateProfileController.getUpdateState();
       }
     });
   }
