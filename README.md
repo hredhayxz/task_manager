@@ -1,5 +1,8 @@
+# Flutter Task Manager Application
 
+Elevate your productivity with Task Manager, a meticulously crafted task manager application designed to streamline your journey towards achieving your goals. With its sleek design and intuitive user interface, Task Manager redefines task management, making it an indispensable companion for both personal and professional endeavors.
 
+## UI
 
 ![image](https://github.com/hredhayxz/Ostad-Flutter-App-Development-All/assets/60058949/952678e3-ac0b-419c-a4c0-acf0d43cac49)
 ![image](https://github.com/hredhayxz/Ostad-Flutter-App-Development-All/assets/60058949/91f70eff-951d-43b8-b50e-f22ee0ce10ed)
@@ -17,6 +20,74 @@
 ![image](https://github.com/hredhayxz/Ostad-Flutter-App-Development-All/assets/60058949/847a2a6e-66ad-4d43-92fe-e7686f238401)
 ![image](https://github.com/hredhayxz/Ostad-Flutter-App-Development-All/assets/60058949/4691c3bf-2043-40fd-a636-5ea088431c89)
 
+
+## Features of Task Manager
+
+- **Seamless Onboarding:**
+Embark on your productivity journey by creating your account through our user-friendly sign-up option. Forgot your password? No worries! Our secure log-in with password recovery feature ensures that you're always in control of your account.
+
+- **Empowering Profile Updates:**
+Customize your user experience and keep your information up-to-date effortlessly. The profile update option lets you modify your details and ensure your personal touch on the app.
+
+- **Effortless Task Management:**
+Add tasks effortlessly and embark on the path to success. The app initiates with a default category called "New," ensuring a swift start to your task list. With just a tap, transform your tasks into achievements.
+
+- **Dynamic Task Status Updates:**
+Progress Pal empowers you to manage your tasks dynamically. Move tasks between the "In Progress," "Completed," and "Cancelled" statuses effortlessly. A convenient bottom sheet pops up, allowing you to seamlessly shift tasks to the desired status.
+
+- **Insightful Summary Card:**
+Stay on top of your game with the Summary Card feature. It provides a quick snapshot of task distribution across the "In Progress," "Completed," and "Cancelled" categories. What's more? This handy card is accessible from any of the four main pages, keeping you informed at all times.
+
+Task Manager isn't just an app; it's a tool that adapts to your rhythm, empowering you to make progress every step of the way. Whether you're a busy professional, a dedicated student, or someone striving to manage daily tasks effectively, Progress Pal caters to your unique needs.
+
+Experience the future of task management. Download Task Manager today and unlock a world of organization, efficiency, and accomplishment. Your journey to success begins here.
+
+## Getting Started
+
+### Prerequisites
+
+Ensure Flutter is installed on your machine. For installation instructions, refer to the official [Flutter website](https://flutter.dev/docs/get-started/install).
+
+### Installation
+
+Follow these steps to run the Task Manager Application:
+
+1. Clone this repository to your local machine:
+
+```bash
+git clone https://github.com/hredhayxz/task_manager.git
+```
+
+2. Navigate to the project folder:
+
+```bash
+cd task_manager
+```
+
+3. Install dependencies:
+
+```bash
+flutter pub get
+```
+
+### How to Run
+
+Connect your device or emulator and run the app using the following command:
+
+```bash
+flutter run
+```
+## Used Packages
+
+Task Manager integrates the following packages to enhance functionality:
+
+- `flutter_svg: ^2.0.7`: Display Scalable Vector Graphics (SVG) images.
+- `pin_code_fields: ^8.0.1`: Easily implement secure PIN code input fields.
+- `image_picker: ^1.0.1`: Enable users to select images from their devices.
+- `http: ^1.1.0`: Perform HTTP requests and interact with APIs.
+- `cached_network_image: ^3.2.3`: For display network image.
+- `get: ^4.6.5`: Implement state management and dependency injection with the GetX library.
+- `shared_preferences: ^2.2.0`: Local data storage and retrieval tasks using the shared preferences.
 
 
 
@@ -56,6 +127,20 @@ Since I mentioned that my app involves user accounts, tasks with statuses, and i
 
 11. **Testing:**
     - Write unit tests and widget tests to ensure the reliability of your app's functionality.
-
+   
 12. **Documentation:**
     - Maintain clear and concise code comments and documentation to make your codebase understandable to you and others who might work on the project in the future.
+
+   
+
+## Contributors
+
+- [Md Alhaz Mondal Hredhay](https://github.com/hredhayxz)
+
+## Special Thanks
+
+### A heartfelt thanks to my mentors:
+
+[Rabbil Hasan](https://github.com/rupomsoft) for his enlightening prerecorded classes and [Md Rafat J. M.](https://github.com/RafatMeraz) for teaching me how to make UI like this and the API integration seamless.
+
+
